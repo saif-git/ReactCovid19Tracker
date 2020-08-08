@@ -26,6 +26,9 @@ export default class App extends React.Component {
 
     async getData() {
 
+
+
+
         const res = await Axios.get("https://covid19.mathdro.id/api");
         const resCountry = await Axios.get("https://covid19.mathdro.id/api/countries");
         //const resCountry = await Axios.get("https://api.first.org/data/v1/countries");
@@ -60,13 +63,24 @@ export default class App extends React.Component {
     }
 
     async getCountryData(i) {
+        try {
+            const res = await Axios.get(`https://covid19.mathdro.id/api/countries/${i.target.value}`);
+            this.setState({
+                confirmed: res.data.confirmed.value,
+                recovered: res.data.recovered.value,
+                deaths: res.data.deaths.value,
+            });
 
-        const res = await Axios.get(`https://covid19.mathdro.id/api/countries/${i.target.value}`);
-        this.setState({
-            confirmed: res.data.confirmed.value,
-            recovered: res.data.recovered.value,
-            deaths: res.data.deaths.value,
-        });
+        } catch (err) {
+            console.log("country not found", err.response);
+            if (err.response.status = 404) {
+                this.setState({
+                    confirmed: "no confirmed data",
+                    recovered: "no recovered data",
+                    deaths: "no deaths data",
+                });
+            }
+        }
 
     }
     render() {
